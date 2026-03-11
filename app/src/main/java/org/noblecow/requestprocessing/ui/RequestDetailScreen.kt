@@ -3,6 +3,7 @@ package org.noblecow.requestprocessing.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,9 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +31,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +49,7 @@ import org.noblecow.requestprocessing.ui.theme.BrandBlue
 import org.noblecow.requestprocessing.ui.theme.DetailBackground
 import org.noblecow.requestprocessing.ui.theme.DetailCardBackground
 import org.noblecow.requestprocessing.ui.theme.SlideCompletedColor
+import org.noblecow.requestprocessing.ui.theme.ThumbChevronColor
 
 private val verticalSpacing = 60.dp
 private val horizontalSpacing = 12.dp
@@ -155,8 +162,42 @@ fun RequestDetailScreen(
                     onSlideCompleted = {
                         isSlided = true
                         viewModel.approve()
+                    },
+                    fractionalThreshold = 0.7f, // Make the slider a little more sensitive
+                    thumb = { slided, fraction, colors, size, orientation ->
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterStart)
+                                // .offset { IntOffset(currentOffsetPx.roundToInt(), 0) }
+                                .size(size)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(BackgroundBlue),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (slided) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(size * 0.6f)
+                                        .clip(CircleShape)
+                                        .background(ThumbChevronColor),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null,
+                                        tint = Color.White
+                                    )
+                                }
+                            } else {
+                                Text(
+                                    text = "»",
+                                    color = ThumbChevronColor,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 32.sp
+                                )
+                            }
+                        }
                     }
-                    // thumb = { slided, fraction, colors, size, orientation -> // Customize
                 )
             }
         }
